@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MyGift</title>
+<style>
+:root{--bg:#000;--wine:#5a0a1a;--burg:#800020;--red:#a3122b;--glow:rgba(163,18,43,.45);--card:#120407;--txt:#fff;--mut:#c9a3aa}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(ellipse at top,#2a0610 0,#000 55%) fixed;color:var(--txt);font-family:'Segoe UI',Tahoma,sans-serif;min-height:100vh;padding-bottom:60px}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+header{margin:18px auto;max-width:1000px;padding:0 16px;position:relative}
+.banner{border:2px solid var(--burg);border-radius:32px;background:linear-gradient(135deg,#1a0409,#3a0813);box-shadow:0 0 30px var(--glow);padding:28px 80px;display:flex;align-items:center;justify-content:center;gap:14px;position:relative}
+.logo{font-family:Georgia,serif;font-size:clamp(34px,7vw,64px);letter-spacing:2px}
+.logo span{color:var(--red)}
+.sierra{width:62px;height:62px;border-radius:50%;background:radial-gradient(circle,var(--burg),#2a0610);box-shadow:0 0 18px var(--glow);font-size:32px;display:grid;place-items:center;animation:float 3s ease-in-out infinite;position:relative}
+.sierra small{position:absolute;bottom:-18px;font-size:11px;color:var(--mut);letter-spacing:1px}
+@keyframes float{50%{transform:translateY(-6px)}}
+.iconbtn{position:absolute;top:50%;inset-inline-end:22px;transform:translateY(-50%);width:44px;height:44px;border:2px solid var(--red);border-radius:12px;font-size:26px;background:#1a0409;transition:.2s}
+.iconbtn:hover{background:var(--burg);box-shadow:0 0 14px var(--glow)}
+.bar{max-width:1000px;margin:0 auto 10px;padding:0 20px;display:flex;justify-content:flex-end;gap:10px}
+.pill{border:1px solid var(--burg);border-radius:20px;padding:6px 14px;font-size:14px;color:var(--mut)}
+.pill:hover{background:var(--wine);color:#fff}
+.grid{max-width:1000px;margin:20px auto;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.card{background:linear-gradient(160deg,var(--card),#2a0610);border:1.5px solid var(--burg);border-radius:26px;padding:20px;min-height:230px;position:relative;cursor:pointer;transition:.25s}
+.card:hover{transform:translateY(-4px);box-shadow:0 0 24px var(--glow)}
+.top{display:flex;gap:14px;align-items:center}
+.pfp{width:62px;height:62px;border-radius:50%;border:2px solid var(--red);background:var(--wine);display:grid;place-items:center;font-size:24px;overflow:hidden;flex:none}
+.pfp img{width:100%;height:100%;object-fit:cover}
+.name{font-size:20px;font-weight:600}
+.rel{font-size:13px;color:var(--mut)}
+.cal{position:absolute;top:16px;inset-inline-end:16px;font-size:22px;padding:4px 8px;border-radius:10px}
+.cal:hover{background:var(--burg)}
+.tags{margin-top:16px;display:flex;flex-wrap:wrap;gap:7px}
+.tag{background:rgba(128,0,32,.35);border:1px solid var(--burg);border-radius:14px;padding:3px 10px;font-size:13px}
+.empty{color:var(--mut);text-align:center;grid-column:1/-1;padding:40px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;place-items:center;z-index:10;padding:16px}
+.modal.on{display:grid}
+.box{background:linear-gradient(160deg,#150408,#2f0712);border:2px solid var(--burg);border-radius:26px;padding:24px;width:100%;max-width:520px;max-height:88vh;overflow:auto;box-shadow:0 0 40px var(--glow)}
+.box h2{font-family:Georgia,serif;margin-bottom:14px}
+input,select,textarea{width:100%;padding:11px 14px;margin:6px 0 12px;background:#000;color:#fff;border:1px solid var(--burg);border-radius:12px;font:inherit}
+.btn{background:var(--burg);padding:10px 20px;border-radius:14px;border:1px solid var(--red)}
+.btn:hover{background:var(--red)}
+.btn.ghost{background:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.sec{margin:16px 0 6px;color:var(--mut);font-size:13px;letter-spacing:1px;text-transform:uppercase}
+.item{background:rgba(0,0,0,.45);border:1px solid #4a0d1c;border-radius:12px;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:14px}
+.item a{color:#ff8da1}
+.sale{color:#ff6b81;font-weight:700}
+.chat{height:300px;overflow:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.msg{padding:9px 14px;border-radius:16px;max-width:85%;font-size:14px;line-height:1.5}
+.bot{background:var(--wine);align-self:flex-start}
+.me{background:#222;align-self:flex-end}
+.close{float:inline-end;font-size:22px}
+</style>
+</head>
+<body>
+<header>
+ <div class="banner">
+  <button class="sierra" id="sierraBtn" title="Sierra">🌹<small data-t="sierra">Sierra</small></button>
+  <div class="logo">My<span>Gift</span> 💐</div>
+  <button class="iconbtn" id="addBtn" title="+">+</button>
+ </div>
+</header>
+<div class="bar">
+ <button class="pill" id="settingsBtn" data-t="settings">⚙ Settings</button>
+</div>
+<main class="grid" id="grid"></main>
+
+<div class="modal" id="mAdd"><div class="box">
+ <button class="close" data-close>✕</button>
+ <h2 data-t="newProfile">New profile</h2>
+ <label data-t="name">Name</label><input id="aName">
+ <label data-t="relation">Relationship</label><input id="aRel">
+ <label data-t="photo">Photo (optional)</label><input type="file" id="aPhoto" accept="image/*">
+ <label data-t="bday">Birthday</label><input type="date" id="aBday">
+ <p class="rel" data-t="surveyNote">After saving, you'll get a survey link to send to them.</p>
+ <div class="row"><button class="btn" id="saveProfile" data-t="save">Save</button></div>
+</div></div>
+
+<div class="modal" id="mProfile"><div class="box" id="profileBox"></div></div>
+<div class="modal" id="mCal"><div class="box" id="calBox"></div></div>
+
+<div class="modal" id="mSierra"><div class="box">
+ <button class="close" data-close>✕</button>
+ <h2>🌹 Sierra</h2>
+ <div class="chat" id="chat"></div>
+ <select id="chatFor"></select>
+ <input id="chatIn" data-tp="askSierra" placeholder="Tell Sierra about the occasion...">
+ <button class="btn" id="sendChat" data-t="send">Send</button>
+</div></div>
+
+<div class="modal" id="mSet"><div class="box">
+ <button class="close" data-close>✕</button>
+ <h2 data-t="settings">Settings</h2>
+ <label data-t="language">Language</label>
+ <select id="langSel"><option value="en">English</option><option value="ar">العربية</option></select>
+</div></div>
+
+<script>
+const T={
+en:{sierra:"Sierra",settings:"⚙ Settings",newProfile:"New profile",name:"Name",relation:"Relationship",photo:"Photo (optional)",bday:"Birthday",save:"Save",surveyNote:"After saving, you'll get a survey link to send to them.",language:"Language",send:"Send",askSierra:"Tell Sierra about the occasion...",empty:"No profiles yet. Tap + to add someone you love.",gifts:"Gift ideas",events:"Event ideas",deals:"Discounts",survey:"Survey link",copy:"Copy link",calendar:"Calendar",addDate:"Add date",label:"Label (e.g. Anniversary)",remind:"Reminder: 14 days before",noDates:"No dates yet.",welcome:"Hi, I'm Sierra. Tell me who the gift is for and why, and I'll find the perfect one.",off:"off",copied:"Link copied!",stores:"Checked: Amazon, Noon, Jarir, Namshi",sierraReply:(n,t)=>`For ${n}, based on their interests (${t}), I'd go with something personal and meaningful. Try: ${t.split(', ')[0]} themed gift set, a handwritten letter with it, and an experience for two. Tell me your budget and I'll narrow it down.`},
+ar:{sierra:"سييرا",settings:"⚙ الإعدادات",newProfile:"ملف جديد",name:"الاسم",relation:"صلة القرابة",photo:"الصورة (اختياري)",bday:"تاريخ الميلاد",save:"حفظ",surveyNote:"بعد الحفظ ستحصل على رابط الاستبيان لإرساله لهم.",language:"اللغة",send:"إرسال",askSierra:"أخبر سييرا عن المناسبة...",empty:"لا توجد ملفات بعد. اضغط + لإضافة شخص تحبه.",gifts:"أفكار هدايا",events:"أفكار مناسبات",deals:"الخصومات",survey:"رابط الاستبيان",copy:"نسخ الرابط",calendar:"التقويم",addDate:"إضافة تاريخ",label:"العنوان (مثال: ذكرى)",remind:"تذكير: قبل 14 يوماً",noDates:"لا توجد تواريخ.",welcome:"مرحباً، أنا سييرا. أخبرني لمن الهدية ولماذا وسأجد لك الأنسب.",off:"خصم",copied:"تم نسخ الرابط!",stores:"تم الفحص: أمازون، نون، جرير، نمشي",sierraReply:(n,t)=>`بالنسبة لـ ${n} وبناءً على اهتماماتهم (${t}) أقترح هدية شخصية ذات معنى: طقم هدايا عن ${t.split(', ')[0]} مع رسالة بخط اليد وتجربة لشخصين. أخبرني بميزانيتك لأحدد لك الأفضل.`}
+};
+const POOL=["Perfume","Books","Coffee","Jewelry","Travel","Fashion","Art","Music","Skincare","Photography","Cooking","Candles","Fitness","Gaming","Flowers","Chocolate","Movies","Tech","Gardening","Journaling"];
+let lang=localStorage.lang||'en';
+let profiles=JSON.parse(localStorage.profiles||'null')||[
+ {id:1,name:"Sara",rel:"Best friend",photo:"",interests:POOL.slice(0,12),dates:[{label:"Birthday",date:"2027-03-14"}]},
+ {id:2,name:"Omar",rel:"Brother",photo:"",interests:POOL.slice(8,20),dates:[{label:"Graduation",date:"2027-06-20"}]}];
+const save=()=>localStorage.profiles=JSON.stringify(profiles);
+const $=s=>document.querySelector(s), t=k=>T[lang][k];
+function daily(p){const d=new Date();let seed=d.getFullYear()*372+d.getMonth()*31+d.getDate()+p.id;
+ const a=[...p.interests];for(let i=a.length-1;i>0;i--){seed=(seed*9301+49297)%233280;const j=Math.floor(seed/233280*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+ return a.slice(0,7)}
+function pfp(p){return p.photo?`<img src="${p.photo}">`:p.name[0].toUpperCase()}
+function render(){
+ document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+ document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t(e.dataset.t));
+ document.querySelectorAll('[data-tp]').forEach(e=>e.placeholder=t(e.dataset.tp));
+ $('#langSel').value=lang;
+ $('#grid').innerHTML=profiles.length?profiles.map(p=>`<div class="card" data-id="${p.id}">
+  <button class="cal" data-cal="${p.id}">📅</button>
+  <div class="top"><div class="pfp">${pfp(p)}</div><div><div class="name">${p.name}</div><div class="rel">${p.rel||''}</div></div></div>
+  <div class="tags">${daily(p).map(i=>`<span class="tag">${i}</span>`).join('')}</div></div>`).join(''):`<div class="empty">${t('empty')}</div>`;
+ $('#chatFor').innerHTML=profiles.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+}
+const open=id=>$(id).classList.add('on');
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('.modal').classList.remove('on'));
+document.querySelectorAll('.modal').forEach(m=>m.onclick=e=>{if(e.target===m)m.classList.remove('on')});
+$('#addBtn').onclick=()=>open('#mAdd');
+$('#settingsBtn').onclick=()=>open('#mSet');
+$('#langSel').onchange=e=>{lang=e.target.value;localStorage.lang=lang;render()};
+$('#saveProfile').onclick=()=>{
+ const name=$('#aName').value.trim();if(!name)return;
+ const f=$('#aPhoto').files[0];
+ const finish=photo=>{const dates=$('#aBday').value?[{label:lang==='ar'?'ميلاد':'Birthday',date:$('#aBday').value}]:[];
+  profiles.push({id:Date.now(),name,rel:$('#aRel').value,photo,interests:POOL.slice().sort(()=>Math.random()-.5).slice(0,12),dates});
+  save();render();$('#mAdd').classList.remove('on');['#aName','#aRel','#aBday','#aPhoto'].forEach(s=>$(s).value='')};
+ if(f){const r=new FileReader();r.onload=()=>finish(r.result);r.readAsDataURL(f)}else finish('');
+};
+$('#grid').onclick=e=>{
+ const c=e.target.closest('[data-cal]');if(c){e.stopPropagation();showCal(+c.dataset.cal);return}
+ const card=e.target.closest('.card');if(card)showProfile(+card.dataset.id)};
+function showProfile(id){
+ const p=profiles.find(x=>x.id===id),ints=daily(p);
+ const link=`${location.origin||'https://mygift.app'}/survey/${p.id}`;
+ const gifts=ints.slice(0,4).map((i,k)=>({n:`${i} gift set`,d:[0,25,0,15][k]}));
+ $('#profileBox').innerHTML=`<button class="close" data-close>✕</button>
+ <div class="top"><div class="pfp">${pfp(p)}</div><div><div class="name">${p.name}</div><div class="rel">${p.rel||''}</div></div></div>
+ <div class="sec">${t('gifts')}</div>${gifts.map(g=>`<div class="item"><span>🎁 ${g.n}</span><a href="https://www.google.com/search?q=${encodeURIComponent(g.n)}" target="_blank">↗</a></div>`).join('')}
+ <div class="sec">${t('deals')}</div>${gifts.filter(g=>g.d).map(g=>`<div class="item"><span>${g.n}</span><span class="sale">-${g.d}% ${t('off')}</span></div>`).join('')}
+ <p class="rel">${t('stores')}</p>
+ <div class="sec">${t('events')}</div>${ints.slice(4,7).map(i=>`<div class="item">✨ ${i}</div>`).join('')}
+ <div class="sec">${t('survey')}</div><div class="item"><span style="word-break:break-all">${link}</span><button class="btn" id="cp">${t('copy')}</button></div>`;
+ $('#profileBox').querySelector('[data-close]').onclick=()=>$('#mProfile').classList.remove('on');
+ $('#cp').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(link);alert(t('copied'))};
+ open('#mProfile')}
+function showCal(id){
+ const p=profiles.find(x=>x.id===id);
+ const draw=()=>{$('#calBox').innerHTML=`<button class="close" data-close>✕</button><h2>📅 ${p.name} — ${t('calendar')}</h2>
+ ${p.dates.length?p.dates.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(d=>`<div class="item"><span>${d.label} · ${d.date}</span><span class="rel">🔔 ${t('remind')}</span></div>`).join(''):`<p class="rel">${t('noDates')}</p>`}
+ <div class="sec">${t('addDate')}</div><input id="cl" placeholder="${t('label')}"><input type="date" id="cd"><button class="btn" id="cadd">${t('addDate')}</button>`;
+ $('#calBox').querySelector('[data-close]').onclick=()=>$('#mCal').classList.remove('on');
+ $('#cadd').onclick=()=>{if($('#cl').value&&$('#cd').value){p.dates.push({label:$('#cl').value,date:$('#cd').value});save();draw()}}};
+ draw();open('#mCal')}
+function bot(m,c){const d=document.createElement('div');d.className='msg '+c;d.textContent=m;$('#chat').appendChild(d);$('#chat').scrollTop=1e9}
+$('#sierraBtn').onclick=()=>{if(!$('#chat').children.length)bot(t('welcome'),'bot');open('#mSierra')};
+$('#sendChat').onclick=()=>{const v=$('#chatIn').value.trim();if(!v)return;bot(v,'me');$('#chatIn').value='';
+ const p=profiles.find(x=>x.id==$('#chatFor').value);
+ setTimeout(()=>bot(p?T[lang].sierraReply(p.name,daily(p).slice(0,3).join(', ')):t('empty'),'bot'),500)};
+render();
+</script>
+</body>
+</html>
