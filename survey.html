@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MyGift Survey</title>
+<style>
+:root{--burg:#800020;--red:#a3122b;--wine:#5a0a1a;--glow:rgba(163,18,43,.45);--mut:#c9a3aa}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(ellipse at top,#2a0610 0,#000 55%) fixed;color:#fff;font-family:'Segoe UI',Tahoma,sans-serif;min-height:100vh;padding:20px}
+.wrap{max-width:640px;margin:0 auto}
+.logo{text-align:center;font-family:Georgia,serif;font-size:42px;margin:10px 0}.logo span{color:var(--red)}
+.lang{display:block;margin:0 auto 14px;background:none;border:1px solid var(--burg);color:var(--mut);border-radius:18px;padding:5px 14px;cursor:pointer}
+.prog{height:8px;background:#1a0409;border-radius:8px;overflow:hidden;margin-bottom:6px}
+.prog div{height:100%;background:linear-gradient(90deg,var(--burg),var(--red));width:0;transition:.4s}
+.step{text-align:center;color:var(--mut);font-size:13px;margin-bottom:14px}
+.box{background:linear-gradient(160deg,#150408,#2f0712);border:2px solid var(--burg);border-radius:26px;padding:24px;box-shadow:0 0 40px var(--glow)}
+h2{font-family:Georgia,serif;margin-bottom:16px}
+.q{margin-bottom:20px}
+.q label{display:block;margin-bottom:7px;font-size:15px}
+.q label b{color:var(--red)}
+input[type=text],input[type=number],input[type=date],textarea{width:100%;padding:11px 14px;background:#000;color:#fff;border:1px solid var(--burg);border-radius:12px;font:inherit}
+input[type=color]{width:70px;height:40px;background:#000;border:1px solid var(--burg);border-radius:10px}
+input[type=range]{width:100%;accent-color:var(--red)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--burg);border-radius:18px;padding:6px 14px;cursor:pointer;font-size:14px;background:#000;color:#fff}
+.chip.on{background:var(--burg);box-shadow:0 0 10px var(--glow)}
+.nav{display:flex;justify-content:space-between;margin-top:10px}
+.btn{background:var(--burg);color:#fff;border:1px solid var(--red);border-radius:14px;padding:11px 24px;font:inherit;cursor:pointer}
+.btn:hover{background:var(--red)}.btn.ghost{background:none}
+.done{text-align:center;padding:30px 0}
+.dates .row{display:flex;gap:8px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="logo">My<span>Gift</span> 💐</div>
+ <button class="lang" id="lang">العربية</button>
+ <div class="prog"><div id="bar"></div></div>
+ <div class="step" id="step"></div>
+ <div class="box" id="box"></div>
+</div>
+<script>
+const UI={en:{next:"Next",back:"Back",send:"Send ❤",step:(a,b)=>`Step ${a} of ${b}`,thanks:"Thank you! 🌹",thanksP:"Your answers were sent. Someone who loves you will take it from here.",add:"+ Add date",lbl:"Label",req:"Required"},
+ar:{next:"التالي",back:"السابق",send:"إرسال ❤",step:(a,b)=>`الخطوة ${a} من ${b}`,thanks:"شكراً لك! 🌹",thanksP:"تم إرسال إجاباتك. شخص يحبك سيتولى الباقي.",add:"+ إضافة تاريخ",lbl:"العنوان",req:"مطلوب"}};
+const O=(en,ar)=>en.map((e,i)=>({v:e,en:e,ar:ar[i]}));
+const COLORS=O(["Red","Burgundy","Black","White","Pink","Blue","Green","Beige","Gold","Purple"],["أحمر","عنابي","أسود","أبيض","وردي","أزرق","أخضر","بيج","ذهبي","بنفسجي"]);
+const S=[
+{en:"About you",ar:"عنك",q:[
+{id:"name",t:"text",req:1,en:"What's your name?",ar:"ما اسمك؟"},
+{id:"age",t:"number",en:"How old are you?",ar:"كم عمرك؟"},
+{id:"bday",t:"date",en:"When is your birthday?",ar:"متى عيد ميلادك؟"},
+{id:"gender",t:"single",en:"What's your gender? (only used to filter gift ideas)",ar:"ما جنسك؟ (لتصفية الأفكار فقط)",o:O(["Female","Male","Prefer not to say"],["أنثى","ذكر","أفضل عدم القول"])},
+{id:"dates",t:"dates",en:"Other dates that matter to you (anniversary, graduation...)",ar:"تواريخ أخرى مهمة لك (ذكرى، تخرج...)"}]},
+{en:"Style and fashion",ar:"الأسلوب والموضة",q:[
+{id:"favColor",t:"color",en:"Your favorite color?",ar:"لونك المفضل؟"},
+{id:"wearColors",t:"multi",en:"Other colors you love wearing?",ar:"ألوان أخرى تحب ارتداءها؟",o:COLORS},
+{id:"favBrand",t:"text",en:"Your favorite brand overall?",ar:"ماركتك المفضلة بشكل عام؟"},
+{id:"clothing",t:"multi",en:"What do you like most in clothing?",ar:"ما الذي تفضله في الملابس؟",o:O(["Abayas","Dresses","Streetwear","Classic","Sportswear","Modest","Luxury","Vintage"],["عبايات","فساتين","ستريت","كلاسيكي","رياضي","محتشم","فاخر","فينتج"])},
+{id:"clothBrand",t:"text",en:"Your favorite clothing brand?",ar:"ماركة ملابسك المفضلة؟"},
+{id:"sizes",t:"text",en:"Shoe and clothing size (optional)",ar:"مقاس الحذاء والملابس (اختياري)"},
+{id:"accessories",t:"multi",en:"Jewelry and accessories you like?",ar:"المجوهرات والإكسسوارات التي تحبها؟",o:O(["Rings","Necklaces","Watches","Bags","Scarves","Sunglasses","None"],["خواتم","قلائد","ساعات","حقائب","أوشحة","نظارات","لا شيء"])}]},
+{en:"Interests and hobbies",ar:"الاهتمامات والهوايات",q:[
+{id:"interests",t:"multi",max:5,en:"Your top 5 interests",ar:"أهم 5 اهتمامات لديك",o:O(["Books","Art","Music","Travel","Cooking","Gaming","Photography","Fitness","Tech","Gardening","Movies","Fashion","Beauty","Coffee"],["كتب","فن","موسيقى","سفر","طبخ","ألعاب","تصوير","لياقة","تقنية","زراعة","أفلام","موضة","جمال","قهوة"])},
+{id:"relax",t:"text",en:"What do you do to relax?",ar:"ماذا تفعل لتسترخي؟"},
+{id:"sports",t:"single",en:"Do you like sports?",ar:"هل تحب الرياضة؟",o:O(["Yes","No"],["نعم","لا"])},
+{id:"sportList",t:"multi",show:a=>a.sports==="Yes",en:"Which sports do you play or watch?",ar:"أي رياضات تمارس أو تتابع؟",o:O(["Football","Basketball","Tennis","Swimming","Running","Gym","Padel","Yoga","Other"],["كرة القدم","كرة السلة","تنس","سباحة","جري","نادي رياضي","بادل","يوغا","أخرى"])},
+{id:"team",t:"text",show:a=>a.sports==="Yes",en:"Favorite team or athlete?",ar:"فريقك أو لاعبك المفضل؟"},
+{id:"music",t:"text",en:"Music you listen to and favorite artist?",ar:"الموسيقى التي تسمعها وفنانك المفضل؟"},
+{id:"media",t:"text",en:"Favorite book, show, or movie?",ar:"كتابك أو مسلسلك أو فيلمك المفضل؟"}]},
+{en:"Taste and favorites",ar:"الذوق والمفضلات",q:[
+{id:"scent",t:"multi",en:"Favorite scents?",ar:"روائحك المفضلة؟",o:O(["Floral","Woody","Oud","Vanilla","Fresh","Sweet","Musk"],["زهري","خشبي","عود","فانيلا","منعش","حلو","مسك"])},
+{id:"beautyBrand",t:"text",en:"Favorite perfume or beauty brand?",ar:"ماركة العطور أو التجميل المفضلة؟"},
+{id:"food",t:"text",en:"Favorite food or sweet?",ar:"طعامك أو حلواك المفضلة؟"},
+{id:"drink",t:"text",en:"Favorite drink or café order?",ar:"مشروبك أو طلبك المفضل في الكافيه؟"},
+{id:"allergy",t:"text",en:"Any allergies or dislikes we should avoid?",ar:"أي حساسية أو أشياء لا تحبها يجب تجنبها؟"},
+{id:"stores",t:"text",en:"Stores you like shopping at?",ar:"المتاجر التي تحب التسوق منها؟"}]},
+{en:"Gift preferences",ar:"تفضيلات الهدايا",q:[
+{id:"giftType",t:"single",en:"You prefer...",ar:"تفضل...",o:O(["Useful things","Beautiful things","Experiences"],["أشياء مفيدة","أشياء جميلة","تجارب"])},
+{id:"bestGift",t:"area",en:"Best gift you've ever received, and why?",ar:"أفضل هدية حصلت عليها ولماذا؟"},
+{id:"want",t:"area",en:"Something you've wanted lately but haven't bought?",ar:"شيء أردته مؤخراً ولم تشتره؟"},
+{id:"budget",t:"range",en:"Gift budget comfort zone (small gesture → big surprise)",ar:"ميزانية الهدية المريحة (لفتة صغيرة ← مفاجأة كبيرة)"},
+{id:"extra",t:"area",en:"Anything else you'd like your loved one to know?",ar:"أي شيء آخر تود أن يعرفه من يحبك؟"}]}];
+let L='en',cur=0,A={dates:[],favColor:"#800020",budget:2};
+const $=s=>document.querySelector(s);
+function qHtml(q){const lab=`<label>${q[L]} ${q.req?'<b>*</b>':''}</label>`,v=A[q.id];let f='';
+ if(q.t==='text')f=`<input type="text" data-id="${q.id}" value="${v||''}">`;
+ if(q.t==='number')f=`<input type="number" min="1" max="120" data-id="${q.id}" value="${v||''}">`;
+ if(q.t==='date')f=`<input type="date" data-id="${q.id}" value="${v||''}">`;
+ if(q.t==='area')f=`<textarea rows="3" data-id="${q.id}">${v||''}</textarea>`;
+ if(q.t==='color')f=`<input type="color" data-id="${q.id}" value="${v}">`;
+ if(q.t==='range')f=`<input type="range" min="1" max="4" data-id="${q.id}" value="${v}">`;
+ if(q.t==='single'||q.t==='multi')f=`<div class="chips">${q.o.map(o=>{const on=q.t==='multi'?(v||[]).includes(o.v):v===o.v;return `<button type="button" class="chip ${on?'on':''}" data-chip="${q.id}" data-v="${o.v}">${o[L]}</button>`}).join('')}</div>`;
+ if(q.t==='dates')f=`<div class="dates">${A.dates.map((d,i)=>`<div class="row"><input type="text" placeholder="${UI[L].lbl}" data-di="${i}" data-k="label" value="${d.label}"><input type="date" data-di="${i}" data-k="date" value="${d.date}"></div>`).join('')}<button type="button" class="chip" id="addD">${UI[L].add}</button></div>`;
+ return `<div class="q">${lab}${f}</div>`}
+function render(){
+ document.documentElement.lang=L;document.documentElement.dir=L==='ar'?'rtl':'ltr';
+ $('#lang').textContent=L==='en'?'العربية':'English';
+ const s=S[cur];$('#bar').style.width=((cur+1)/S.length*100)+'%';$('#step').textContent=UI[L].step(cur+1,S.length);
+ $('#box').innerHTML=`<h2>${s[L]}</h2>`+s.q.filter(q=>!q.show||q.show(A)).map(qHtml).join('')+
+ `<div class="nav"><button class="btn ghost" id="bk" ${cur?'':'style="visibility:hidden"'}>${UI[L].back}</button><button class="btn" id="nx">${cur===S.length-1?UI[L].send:UI[L].next}</button></div>`;
+ $('#bk').onclick=()=>{cur--;render()};
+ $('#nx').onclick=()=>{if(S[cur].q.some(q=>q.req&&!A[q.id])){alert(UI[L].req);return}cur===S.length-1?finish():(cur++,render(),scrollTo(0,0))};
+ const ad=$('#addD');if(ad)ad.onclick=()=>{A.dates.push({label:'',date:''});render()};
+}
+document.addEventListener('input',e=>{const d=e.target.dataset;
+ if(d.id)A[d.id]=e.target.type==='range'?+e.target.value:e.target.value;
+ if(d.di!==undefined)A.dates[d.di][d.k]=e.target.value});
+document.addEventListener('click',e=>{const c=e.target.closest('[data-chip]');if(!c)return;
+ const q=S.flatMap(s=>s.q).find(x=>x.id===c.dataset.chip),v=c.dataset.v;
+ if(q.t==='single')A[q.id]=v;
+ else{const a=A[q.id]=A[q.id]||[];const i=a.indexOf(v);i>-1?a.splice(i,1):(!q.max||a.length<q.max)&&a.push(v)}
+ render()});
+function finish(){
+ const id=location.pathname.split('/').pop()||'demo';
+ localStorage['survey_'+id]=JSON.stringify(A); // TODO: replace with POST to your backend
+ console.log('Survey answers',A);
+ $('#box').innerHTML=`<div class="done"><h2>${UI[L].thanks}</h2><p>${UI[L].thanksP}</p></div>`;$('#bar').style.width='100%'}
+$('#lang').onclick=()=>{L=L==='en'?'ar':'en';render()};
+render();
+</script>
+</body>
+</html>
